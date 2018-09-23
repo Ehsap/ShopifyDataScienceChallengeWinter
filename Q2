@@ -1,0 +1,36 @@
+A) How many orders were shipped by Speedy Express in total?
+54
+
+SELECT Count(Orders.OrderID) As "CountSpeedyExpressOrdersShipped"
+FROM Orders
+    JOIN Shippers
+        ON Orders.ShipperID = Shippers.ShipperID
+WHERE Shippers.ShipperName = "Speedy Express";
+
+B) What is the last name of the employee with the most orders?
+Peacock
+
+SELECT Employees.LastName
+FROM Employees
+WHERE Employees.EmployeeID = (SELECT Orders.EmployeeID
+                              FROM Orders
+                              GROUP BY EmployeeID
+                              ORDER BY COUNT(EmployeeID) DESC
+                              LIMIT 1);
+
+
+C) What product was ordered by the most customers in Germany?
+Gorgonzola Telino
+
+SELECT Products.ProductName
+FROM Products
+    JOIN OrderDetails
+        ON Products.ProductID = OrderDetails.ProductID
+    JOIN Orders
+        ON Orders.OrderID =  OrderDetails.OrderID
+    JOIN Customers
+        ON Customers.CustomerID = Orders.CustomerID
+WHERE Customers.Country = "Germany"
+GROUP BY Products.ProductName
+ORDER BY COUNT(Products.ProductName) DESC
+LIMIT 1
